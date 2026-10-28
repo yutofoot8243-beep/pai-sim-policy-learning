@@ -44,7 +44,7 @@ def refine_pick_pixel(bgr, u, v, search_px=20, max_shift_px=35, color_tol=12,
             if not min_area <= area <= max_area:
                 continue
             ys, xs = np.nonzero(region)
-            fill = area / float((xs.ptp() + 1) * (ys.ptp() + 1))
+            fill = area / float((np.ptp(xs) + 1) * (np.ptp(ys) + 1))
             sat = float(hsv[..., 1][region].mean())
             if fill < min_fill or sat < min_saturation:
                 continue
