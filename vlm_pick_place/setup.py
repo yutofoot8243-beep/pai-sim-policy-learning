@@ -27,6 +27,7 @@ setup(
             'vlm_agent = vlm_pick_place.vlm_agent_node:main',
             'pick_test = vlm_pick_place.pick_test_node:main',
             'recorder = vlm_pick_place.recorder_node:main',
+            'eval = vlm_pick_place.eval_node:main',
         ],
     },
 )

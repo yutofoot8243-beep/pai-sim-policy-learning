@@ -1,5 +1,8 @@
 """scene_layout.py の配置から vlm_pick_place/worlds/vlm_table.sdf を生成する.
 
+評価用の vlm_table_eval.sdf も作る（動画用の斜めカメラを省き、CPU 描画の負荷を減らす.
+物体の配置は評価ノードがエピソードごとに入れ替える）.
+
   python tools/make_world.py
 """
 
@@ -10,7 +13,7 @@ from scene_layout import (CAMERA_HFOV_DEG, CAMERA_SIZE, CAMERA_XYZ, COLORS, CUBE
                           SIDE_CAMERA_HFOV_DEG, SIDE_CAMERA_LOOK_AT, SIDE_CAMERA_XYZ, TABLE_Z,
                           TRAY_INNER, TRAY_SIZE, TRAY_THICK, TRAYS, polar_to_xy)
 
-OUT = os.path.join(os.path.dirname(__file__), '..', 'vlm_pick_place', 'worlds', 'vlm_table.sdf')
+WORLDS = os.path.join(os.path.dirname(__file__), '..', 'vlm_pick_place', 'worlds')
 
 
 def rgba(rgb):
@@ -144,11 +147,17 @@ HEADER = """<?xml version="1.0" ?>
 """
 
 
-def main():
-    body = camera() + side_camera() + ''.join(tray(*t) for t in TRAYS) + ''.join(cube(*c) for c in CUBES)
-    with open(OUT, 'w', encoding='utf-8', newline='\n') as f:
+def write(name, body):
+    out = os.path.join(WORLDS, name)
+    with open(out, 'w', encoding='utf-8', newline='\n') as f:
         f.write(HEADER + body + '\n  </world>\n</sdf>\n')
-    print('wrote', os.path.normpath(OUT))
+    print('wrote', os.path.normpath(out))
+
+
+def main():
+    objects = ''.join(tray(*t) for t in TRAYS) + ''.join(cube(*c) for c in CUBES)
+    write('vlm_table.sdf', camera() + side_camera() + objects)
+    write('vlm_table_eval.sdf', camera() + objects)
 
 
 if __name__ == '__main__':

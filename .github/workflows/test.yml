@@ -1,0 +1,17 @@
+# ROS / Gazebo を使わない部分（幾何・画像補正・Gemini 応答の解析・シーン生成・評価の判定）の単体テスト.
+# シミュレーションでの評価は重いので手元で回す（README の「評価」参照）.
+name: unit-tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'   # ROS 2 Humble と同じ
+      - run: pip install numpy opencv-python-headless pytest
+      - run: python -m pytest -q test
+        working-directory: vlm_pick_place

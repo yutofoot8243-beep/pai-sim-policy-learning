@@ -11,6 +11,7 @@ from ament_index_python.packages import get_package_share_directory
 from crane_plus_description.robot_description_loader import RobotDescriptionLoader
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, SetParameter
@@ -21,6 +22,9 @@ def generate_launch_description():
         'world_name',
         default_value=os.path.join(
             get_package_share_directory('vlm_pick_place'), 'worlds', 'vlm_table.sdf'))
+    # 評価の連続実行用. GUI を出さずサーバーだけ動かす（カメラは EGL で X なしに描画する）
+    declare_headless = DeclareLaunchArgument('headless', default_value='false')
+    headless = LaunchConfiguration('headless')
 
     # PATHを追加で通さないとSTLファイルが読み込まれない
     env = {'IGN_GAZEBO_SYSTEM_PLUGIN_PATH': os.environ['LD_LIBRARY_PATH'],
@@ -33,7 +37,14 @@ def generate_launch_description():
         cmd=['ign gazebo -r', LaunchConfiguration('world_name'), '--gui-config', gui_config],
         output='screen',
         additional_env=env,
-        shell=True)
+        shell=True,
+        condition=UnlessCondition(headless))
+    ign_gazebo_server = ExecuteProcess(
+        cmd=['ign gazebo -s -r --headless-rendering', LaunchConfiguration('world_name')],
+        output='screen',
+        additional_env=env,
+        shell=True,
+        condition=IfCondition(headless))
 
     spawn = Node(
         package='ros_gz_sim',
@@ -79,7 +90,9 @@ def generate_launch_description():
     return LaunchDescription([
         SetParameter(name='use_sim_time', value=True),
         declare_world,
+        declare_headless,
         ign_gazebo,
+        ign_gazebo_server,
         spawn,
         move_group,
         spawn_controllers,

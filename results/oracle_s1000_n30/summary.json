@@ -1,0 +1,28 @@
+{
+  "episodes": 30,
+  "success_rate": 1.0,
+  "cube_success_rate": 1.0,
+  "attempts": 65,
+  "outcomes": {
+    "success": 63,
+    "perception": 0,
+    "reasoning": 0,
+    "planning": 0,
+    "grasp": 2,
+    "place": 0
+  },
+  "collateral_attempts": 9,
+  "end_reasons": {
+    "agent_done": 30
+  },
+  "mean_sim_duration_success": 42.154333333333334,
+  "mean_attempts_success": 2.1666666666666665,
+  "agent": "oracle",
+  "params": {
+    "seed": 1000,
+    "n_cubes": 0,
+    "yaw_jitter_deg": 20.0,
+    "physics_step": 0.004,
+    "max_steps": 8
+  }
+}
