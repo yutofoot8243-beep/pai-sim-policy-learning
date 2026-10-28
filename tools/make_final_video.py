@@ -1,6 +1,6 @@
 """最終課題の再提出用の動画: 前半は提出版 (Gemini, 2 倍速)、後半は ACT の発展 (2 倍速).
-  python make_final_video.py <pai_eval_data> <提出版の 2 倍速 mp4> <出力 mp4>
-録画 (npz) は 10 fps なので、20 fps の動画に 1 コマずつ並べると 2 倍速になる.
+  python make_final_video.py <pai_eval_data> <提出版の mp4（10 fps・等倍）> <出力 mp4>
+提出版の動画も録画 (npz) も 10 fps なので、20 fps の動画に 1 コマずつ並べると 2 倍速になる.
 """
 import json
 import math
@@ -102,7 +102,7 @@ def part_label(d, text):
 
 
 def old_video(wr):
-    """提出版 (1280x560, 20 fps, 2 倍速の表示入り) を帯つきで入れる."""
+    """提出版 (1280x560, 10 fps, 等倍) を帯つきで 1 コマずつ入れる (= 2 倍速)."""
     c = av.open(OLD)
     for f in c.decode(video=0):
         im = Image.new('RGB', (W, H), BG)
@@ -110,6 +110,7 @@ def old_video(wr):
         d = ImageDraw.Draw(im)
         d.text((16, 22), '前半　Gemini Robotics-ER が画像を見て「次の1手」を毎回決める（10/17 の提出版）',
                font=font(26), fill=ACCENT)
+        d.text((W - 110, 24), '2倍速', font=font(24), fill=WHITE)
         d.text((16, 652), 'AI は推論のみ（学習なし）。掴む点・置く点を画像上で指し、MoveIt でアームを動かす。'
                'ずれた青を自分で見つけて置き直している',
                font=font(20, False), fill=GRAY)
